@@ -1,0 +1,37 @@
+﻿@page "/Subscriptions"
+@using Andy.Core.DTOs
+
+<FluentStack Orientation="Orientation.Vertical" Gap="16">
+    <FluentStack Orientation="Orientation.Horizontal">
+        <FluentIcon Style="margin:6px;" Value="@(new Icons.Regular.Size32.CoinMultiple())"></FluentIcon>
+        <h1>Meine Abonnements</h1>
+    </FluentStack>
+    
+    <p>Hier ist eine Übersicht über deine aktuellen Abonnements.</p>
+
+    @if (subscriptions == null)
+    {
+        <FluentProgressRing />
+        <p>Lade Abonnements...</p>
+    }
+    else
+    {
+        <FluentDataGrid Items="@(subscriptions.AsQueryable())" GridTemplateColumns="1.5fr 1fr 1fr 0.5fr 2fr">
+            <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="Name" />
+
+            <TemplateColumn Title="Betrag" Align="Align.End">
+                @(context.Amount?.ToString("C") ?? "-")
+            </TemplateColumn>
+            
+            <TemplateColumn Title="Nächste Zahlung" Align="Align.Start">
+                @(context.NextPaymentDate?.ToString("d") ?? "-")
+            </TemplateColumn>
+            
+            <TemplateColumn Title="Aktiv" Align="Align.Center">
+                @(context.IsActive.HasValue ? (context.IsActive.Value ? "Ja" : "Nein") : "-")
+            </TemplateColumn>
+
+            <PropertyColumn Property="@(p => p.Memo)" Title="Notiz" />
+        </FluentDataGrid>
+    }
+</FluentStack>
