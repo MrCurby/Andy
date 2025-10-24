@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Andy.Repository.Migrations
+namespace Andy.Persistent.Migrations
 {
     /// <inheritdoc />
     public partial class fixModels : Migration

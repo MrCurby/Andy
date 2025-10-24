@@ -1,7 +1,12 @@
 using Andy.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using Andy.Repository;
+using Andy.Persistent;
+using Andy.Persistent.Interfaces;
+using Andy.Persistent.Repositorys;
+using Andy.Core.Interfaces;
+using Andy.Core.Mappers;
+using Andy.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +15,19 @@ builder.Services.AddDbContext<AndyDbContext>(options =>
     var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AndyDatabase.db");
     options.UseSqlite($"Data Source={dbPath}");
 });
+//add mapper
+builder.Services.AddSingleton<SubscriptionMapper>();
 
-// Add services to the container.
+//add repositorys:
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+
+// Add services
+builder.Services.AddScoped<ISubscitionService, SubscitionService>();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddFluentUIComponents();
+
 
 var app = builder.Build();
 

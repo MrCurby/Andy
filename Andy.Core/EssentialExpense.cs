@@ -8,6 +8,7 @@ namespace Andy.Core
 {
     public class EssentialExpense
     {
+        [Key]
         public int Id { get; set; }
         public string? Type { get; set; }
         public string? Name { get; set; }
@@ -15,7 +16,7 @@ namespace Andy.Core
         public string? Provider { get; set; }
         public DateTime? PaymentDate { get; set; }
         public PaymentCycle PaymentCycle { get; set; }
-        public string? memo { get; set; }
+        public string? Memo { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? LastUpdated { get; set; }
     }

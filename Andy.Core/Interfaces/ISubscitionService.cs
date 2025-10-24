@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Andy.Core.Interfaces
 {
-    public interface ITransactionService
+    public interface ISubscitionService
     {
         
     }

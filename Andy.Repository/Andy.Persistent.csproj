@@ -24,9 +24,4 @@
     <ProjectReference Include="..\Andy.Core\Andy.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Repositorys\" />
-  </ItemGroup>
-
 </Project>
