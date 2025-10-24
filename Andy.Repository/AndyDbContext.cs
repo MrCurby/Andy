@@ -1,7 +1,7 @@
 ﻿using Andy.Core;
 using Microsoft.EntityFrameworkCore;
 
-namespace Andy.Repository
+namespace Andy.Persistent
 {
     public class AndyDbContext : DbContext
     {

@@ -9,20 +9,14 @@ namespace Andy.Core
     public class EssentialExpense
     {
         [Key]
-        public int ExpenseId { get; set; }
-
-        [Required]
+        public int Id { get; set; }
         public string? Type { get; set; }
         public string? Name { get; set; }
-        [Required]
         public double? Amount { get; set; }
-        [Required]
         public string? Provider { get; set; }
-        [Required]
         public DateTime? PaymentDate { get; set; }
-        [Required]
         public PaymentCycle PaymentCycle { get; set; }
-        public string? memo { get; set; }
+        public string? Memo { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? LastUpdated { get; set; }
     }

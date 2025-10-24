@@ -3,6 +3,7 @@ using System;
 using Andy.Persistent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Andy.Persistent.Migrations
 {
     [DbContext(typeof(AndyDbContext))]
-    partial class AndyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251024203746_fixModels")]
+    partial class fixModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
@@ -73,9 +76,6 @@ namespace Andy.Persistent.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Memo")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -89,6 +89,9 @@ namespace Andy.Persistent.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("memo")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -105,22 +108,19 @@ namespace Andy.Persistent.Migrations
                     b.Property<double?>("Amount")
                         .HasColumnType("REAL");
 
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<bool?>("IsActive")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Memo")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("NextPaymentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("memo")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
