@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Andy.Core\Andy.Core.csproj" />
     <ProjectReference Include="..\Andy.Repository\Andy.Repository.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\Shared\" />
+  </ItemGroup>
 </Project>
