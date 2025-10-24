@@ -2,7 +2,7 @@
 using Andy.Core.DTOs;
 using Andy.Core.Mappers;
 using Andy.Persistent;
-using Andy.Persistent.Interfaces;
+using Andy.Core.Interfaces;
 namespace Andy.Persistent.Repositorys
 {
     public class SubscriptionRepository(AndyDbContext dbContext, SubscriptionMapper mappers) : ISubscriptionRepository

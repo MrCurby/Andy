@@ -2,9 +2,8 @@ using Andy.Components;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Andy.Persistent;
-using Andy.Persistent.Interfaces;
-using Andy.Persistent.Repositorys;
 using Andy.Core.Interfaces;
+using Andy.Persistent.Repositorys;
 using Andy.Core.Mappers;
 using Andy.Core.Services;
 
@@ -15,6 +14,7 @@ builder.Services.AddDbContext<AndyDbContext>(options =>
     var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AndyDatabase.db");
     options.UseSqlite($"Data Source={dbPath}");
 });
+
 //add mapper
 builder.Services.AddSingleton<SubscriptionMapper>();
 
