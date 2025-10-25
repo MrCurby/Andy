@@ -1,5 +1,3 @@
-Hello
-
 # Andy — Übersicht über wiederkehrende Ausgaben
 
 Kurzbeschreibung
