@@ -1,11 +1,9 @@
 ﻿using Andy.Core.Interfaces;
+using Andy.Persistent.Mapper;
 using Andy.Persistent.Repositorys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Andy.Persistent
 {
@@ -21,6 +19,7 @@ namespace Andy.Persistent
                 options.UseSqlite($"Data Source={dbPath}");
             });
 
+            services.AddSingleton<SubscriptionMapper>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
             return services;

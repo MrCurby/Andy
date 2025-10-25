@@ -1,6 +1,6 @@
 ﻿using Andy.Core;
 using Andy.Core.DTOs;
-using Andy.Core.Mappers;
+using Andy.Persistent.Mapper;
 using Andy.Persistent;
 using Andy.Core.Interfaces;
 namespace Andy.Persistent.Repositorys

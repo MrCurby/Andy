@@ -4,7 +4,7 @@ using Andy.Core;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Andy.Core.Mappers
+namespace Andy.Persistent.Mapper
 {
     [Mapper]
     public partial class SubscriptionMapper
