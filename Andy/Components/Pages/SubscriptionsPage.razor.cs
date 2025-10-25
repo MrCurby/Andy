@@ -25,5 +25,31 @@ namespace Andy.Components.Pages
             var Subs = await SubscriptionService.GetAllSubscriptionsAsync();
             Subscriptions = SubscriptionMapper.MapToViewModelList(Subs);
         }
+
+        protected async Task UpdateSubscriptionAsync(SubscriptionViewModel? subscription)
+        {
+            if (subscription is null)
+            {
+                Logger.LogWarning("UpdateSubscriptionAsync called with null subscription.");
+                return;
+            }
+
+            try
+            {
+                Logger.LogInformation("Updating subscription Id {Id}.", subscription.Id);
+                var dto = SubscriptionMapper.MapToDto(subscription);
+                await SubscriptionService.UpdateSubscriptionAsync(dto);
+
+                var subs = await SubscriptionService.GetAllSubscriptionsAsync();
+                Subscriptions = SubscriptionMapper.MapToViewModelList(subs);
+
+                Logger.LogInformation("Subscription Id {Id} updated successfully.", subscription.Id);
+                this.StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while updating subscription Id {Id}.", subscription.Id);
+            }
+        }
     }
 }
