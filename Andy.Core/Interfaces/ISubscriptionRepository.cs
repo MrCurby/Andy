@@ -8,5 +8,6 @@ namespace Andy.Core.Interfaces
     public partial interface ISubscriptionRepository
     {
         Task<IEnumerable<SubscriptionDto>> GetAllSubscriptionsAsync();
+        Task UpdateSubscriptionAsync(SubscriptionDto subscriptionDto);
     }
 }

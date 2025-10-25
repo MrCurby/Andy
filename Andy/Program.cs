@@ -3,8 +3,11 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Andy.Persistent;
 using Andy.Core;
+using Andy.Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<SubscriptionMapper>();
 
 builder.Services.AddCoreServices();
 builder.Services.AddPersistenceServices(builder.Configuration);

@@ -27,5 +27,21 @@ namespace Andy.Core.Services
                 throw;
             }
         }
+
+        public async Task UpdateSubscriptionAsync(SubscriptionDto subscriptionDto)
+        {
+            _logger.LogInformation("Method {MethodName} has been called.", nameof(UpdateSubscriptionAsync));
+
+            try
+            {
+                await _subscriptionRepository.UpdateSubscriptionAsync(subscriptionDto);
+                _logger.LogInformation("Method {MethodName} completed successfully.", nameof(UpdateSubscriptionAsync));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred in {MethodName}.", nameof(UpdateSubscriptionAsync));
+                throw;
+            }
+        }
     }
 }
