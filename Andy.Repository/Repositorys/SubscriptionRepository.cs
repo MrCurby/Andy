@@ -1,14 +1,14 @@
 ﻿using Andy.Core;
 using Andy.Core.DTOs;
-using Andy.Core.Mappers;
+using Andy.Persistent.Mapper;
 using Andy.Persistent;
 using Andy.Core.Interfaces;
 namespace Andy.Persistent.Repositorys
 {
-    public class SubscriptionRepository(AndyDbContext dbContext, SubscriptionMapper mappers) : ISubscriptionRepository
+    public class SubscriptionRepository(AndyDbContext dbContext, SubscriptionMapper mapper) : ISubscriptionRepository
     {
         private readonly AndyDbContext _dbContext = dbContext;
-        private readonly SubscriptionMapper _mapper = mappers;
+        private readonly SubscriptionMapper _mapper = mapper;
 
         public async Task<IEnumerable<SubscriptionDto>> GetAllSubscriptionsAsync()
         {
