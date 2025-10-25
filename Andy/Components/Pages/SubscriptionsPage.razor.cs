@@ -4,19 +4,19 @@ using Microsoft.AspNetCore.Components;
 
 namespace Andy.Components.Pages
 {
-    public partial class Subscriptions
+    public partial class SubscriptionsPage
     {
         [Inject]
         protected ISubscitionService SubscriptionService { get; set; } = default!;
 
         [Inject]
-        protected ILogger<Subscriptions> Logger { get; set; } = default!;
-        protected IEnumerable<SubscriptionDto>? subscriptions;
+        protected ILogger<SubscriptionsPage> Logger { get; set; } = default!;
+        protected IEnumerable<SubscriptionDto>? Subscriptions;
 
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Subscriptions page initializing.");
-            subscriptions = await SubscriptionService.GetAllSubscriptionsAsync();
+            Subscriptions = await SubscriptionService.GetAllSubscriptionsAsync();
         }
     }
 }

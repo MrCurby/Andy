@@ -9,14 +9,14 @@
     
     <p>Hier ist eine Übersicht über deine aktuellen Abonnements.</p>
 
-    @if (subscriptions == null)
+    @if (Subscriptions == null)
     {
         <FluentProgressRing />
         <p>Lade Abonnements...</p>
     }
     else
     {
-        <FluentDataGrid Items="@(subscriptions.AsQueryable())" GridTemplateColumns="1.5fr 1fr 1fr 0.5fr 2fr">
+        <FluentDataGrid Items="@(Subscriptions.AsQueryable())" GridTemplateColumns="1.5fr 1fr 1fr 0.5fr 2fr">
             <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="Name" />
 
             <TemplateColumn Title="Betrag" Align="Align.End">
