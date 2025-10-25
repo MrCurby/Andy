@@ -12,5 +12,9 @@ namespace Andy.Persistent.Mapper
         public partial SubscriptionDto MapToDto(Subscription subscription);
 
         public partial IEnumerable<SubscriptionDto> MapToDtoList(IEnumerable<Subscription> subscriptions);
+
+        public partial Subscription MapToEntity(SubscriptionDto subscriptionDto);
+
+        public partial IEnumerable<Subscription> MapToEntityList(IEnumerable<SubscriptionDto> subscriptionsDtos);
     }
 }

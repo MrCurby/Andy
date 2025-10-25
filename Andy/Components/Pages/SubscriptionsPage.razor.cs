@@ -1,5 +1,7 @@
 ﻿using Andy.Core.DTOs;
 using Andy.Core.Interfaces;
+using Andy.Mapper;
+using Andy.ViewModels;
 using Microsoft.AspNetCore.Components;
 
 namespace Andy.Components.Pages
@@ -11,12 +13,17 @@ namespace Andy.Components.Pages
 
         [Inject]
         protected ILogger<SubscriptionsPage> Logger { get; set; } = default!;
-        protected IEnumerable<SubscriptionDto>? Subscriptions;
+
+        [Inject]
+        protected SubscriptionMapper SubscriptionMapper { get; set; } = default!;
+
+        protected IEnumerable<SubscriptionViewModel>? Subscriptions;
 
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Subscriptions page initializing.");
-            Subscriptions = await SubscriptionService.GetAllSubscriptionsAsync();
+            var Subs = await SubscriptionService.GetAllSubscriptionsAsync();
+            Subscriptions = SubscriptionMapper.MapToViewModelList(Subs);
         }
     }
 }
