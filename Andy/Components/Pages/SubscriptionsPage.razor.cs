@@ -44,14 +44,27 @@ namespace Andy.Components.Pages
             this.StateHasChanged();
         }
 
-        private async Task Update()
+        private void Edit(SubscriptionViewModel subscription)
+        { 
+            _selectedSubscription = subscription;
+            _editMode = true;
+            this.StateHasChanged();
+        }
+
+        private async Task Save()
         {
+            if (_selectedSubscription == null)
+            {
+                _editMode = false;
+                this.StateHasChanged();
+                return;
+            }
+
             try
             {
                 await this.LoadData();
 
-                bool subscriptionExists = _selectedSubscription != null &&
-                                          (SubscriptionList?.Any(s => s.Id == _selectedSubscription.Id) ?? false);
+                bool subscriptionExists = SubscriptionList?.Any(s => s.Id == _selectedSubscription.Id) ?? false;
 
                 if (subscriptionExists)
                 {
@@ -65,8 +78,13 @@ namespace Andy.Components.Pages
             finally
             {
                 _editMode = false;
+
+                this.StateHasChanged();
+
                 _selectedSubscription = null;
+
                 await this.LoadData();
+
                 this.StateHasChanged();
             }
         }
@@ -121,6 +139,7 @@ namespace Andy.Components.Pages
         private async Task DeleteSubscriptionAsync(SubscriptionViewModel? subscription)
         {
             await SubscriptionService.DeleteSubscriptionAsync(subscription?.Id ?? 0);
+            _selectedSubscription = null;
             await InvokeAsync(this.LoadData);
         }
 
