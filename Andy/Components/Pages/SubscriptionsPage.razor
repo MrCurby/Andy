@@ -12,9 +12,15 @@
     }
     else
     {
-        <FluentStack Orientation="Orientation.Horizontal">
-            @* <--- linke Seite (Übersicht) ---/>*@
-            <FluentStack Orientation="Orientation.Vertical" Style="width:60%;">
+        <FluentStack Orientation="Orientation.Horizontal" Style="gap: 16px;">
+            @* <--- linke Seite (Übersicht) ---/> *@
+            <FluentStack Orientation="Orientation.Vertical" Style="width:40%; max-height: 70vh; overflow-y: auto;">
+
+                @* Summe der Transaktionen *@
+                <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
+                    <FluentLabel Typo="Typography.PaneHeader">Gesamtsumme: @SubscriptionList.Sum(s => s.Amount ?? 0).ToString("C") (Monatlich)</FluentLabel>
+                </FluentStack>
+
                 @* Aktive Einträge *@
                 <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
                     <FluentLabel Typo="Typography.PaneHeader">Aktive Einträge (@(SubscriptionList.Count(s => s.IsActive == true)))</FluentLabel>
@@ -22,23 +28,25 @@
 
                 @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == true))
                 {
-                    <FluentStack Orientation="Orientation.Horizontal" Class="subscription-row" HorizontalAlignment="HorizontalAlignment.Center" Style="justify-content:space-between;">
-                        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" Style="gap:12px; min-width:0;">
+                    <FluentCard Style="padding: 8px 12px; width:98%">
+                        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="justify-content:space-between; gap: 8px;">
                             <FluentStack Orientation="Orientation.Vertical" Style="min-width:0;">
                                 <FluentLabel Typo="Typography.PaneHeader" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@Subscription.Name</FluentLabel>
                                 <FluentLabel Typo="Typography.Body" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--neutral-foreground-2);">@Subscription.Memo</FluentLabel>
                             </FluentStack>
-                        </FluentStack>
 
-                        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" Style="gap:8px;">
-                            <FluentLabel Typo="Typography.Subject" Style="min-width:80px; text-align:right;">@Subscription.Amount?.ToString("C")</FluentLabel>
-                            <FluentButton Appearance="Appearance.Lightweight" Color="@(Color.Success.ToAttributeValue())" @onclick="() => Edit(Subscription)" Title="Bearbeiten" Style="padding:6px 8px;">Bearbeiten</FluentButton>
-                            <FluentButton Appearance="Appearance.Lightweight" Color="@(Color.Error.ToAttributeValue())" @onclick="() => DeleteSubscriptionAsync(Subscription)" Title="Löschen" Style="padding:6px 8px;">Löschen</FluentButton>
+                            <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.End" Style="gap:8px;">
+                                <FluentLabel Typo="Typography.Subject" Style="text-align:right;">@Subscription.Amount?.ToString("C")</FluentLabel>
+                                <FluentStack Orientation="Orientation.Vertical" Style="gap:4px;">
+                                    <FluentButton Appearance="Appearance.Lightweight" Color="@(Color.Success.ToAttributeValue())" @onclick="() => Edit(Subscription)" Title="Bearbeiten" Style="padding:6px 8px; min-width:80px;">Bearbeiten</FluentButton>
+                                    <FluentButton Appearance="Appearance.Lightweight" Color="@(Color.Error.ToAttributeValue())" @onclick="() => DeleteSubscriptionAsync(Subscription)" Title="Löschen" Style="padding:6px 8px; min-width:80px;">Löschen</FluentButton>
+                                </FluentStack>
+                            </FluentStack>
                         </FluentStack>
-                    </FluentStack>
+                    </FluentCard>
                 }
 
-                <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.08); margin: 16px 0;" />
+                <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.2); margin: 16px 0;" />
 
                 @* Inaktive Einträge *@
                 <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
@@ -47,55 +55,59 @@
 
                 @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == false))
                 {
-                    <FluentStack Orientation="Orientation.Horizontal" Class="subscription-row inactive-entry" Align="Alignment.Center" Style="justify-content:space-between;">
-                        <FluentStack Orientation="Orientation.Horizontal" Align="Alignment.Center" Style="gap:12px; min-width:0;">
-                            <FluentStack Orientation="Orientation.Vertical" Style="min-width:0;">
-                                <FluentLabel Typo="Typography.PaneHeader" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@((Subscription.Name ?? string.Empty).ToString())</FluentLabel>
-                                <FluentLabel Typo="Typography.Body" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--neutral-foreground-2);">@Subscription.Memo</FluentLabel>
+                    <FluentCard Style="padding: 8px 12px;">
+                        <FluentStack Orientation="Orientation.Horizontal" Class="subscription-row inactive-entry" HorizontalAlignment="HorizontalAlignment.Center" Style="justify-content:space-between; gap: 8px;">
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" Style="gap:8px; min-width:0;">
+                                <FluentStack Orientation="Orientation.Vertical" Style="min-width:0;">
+                                    <FluentLabel Typo="Typography.PaneHeader" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@((Subscription.Name ?? string.Empty).ToString())</FluentLabel>
+                                    <FluentLabel Typo="Typography.Body" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--neutral-foreground-2);">@Subscription.Memo</FluentLabel>
+                                </FluentStack>
                             </FluentStack>
-                        </FluentStack>
 
-                        <FluentLabel Typo="Typography.Subject" Style="min-width:80px; text-align:right;">@Subscription.Amount?.ToString("C")</FluentLabel>
-                    </FluentStack>
+                            <FluentLabel Typo="Typography.Subject" Style="min-width:80px; text-align:right;">@Subscription.Amount?.ToString("C")</FluentLabel>
+                        </FluentStack>
+                    </FluentCard>
                 }
             </FluentStack>
 
-            @* <--- rechte Seite (bearbeiten) ---/>*@
-            <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; padding-left:16px;">
-                @if (_selectedSubscription == null)
-                {
-                    <FluentStack>
-                        <FluentLabel Typo="Typography.PaneHeader">Kein Eintrag ausgewählt</FluentLabel>
-                        <FluentSpacer />
-                        <FluentStack Orientation="Orientation.Horizontal">
-                            <FluentButton Appearance="Appearance.Accent" @onclick="NewSubscription">Neues Abonnement</FluentButton>
-                        </FluentStack>
-                    </FluentStack>
-                }
-                else if (_editMode)
-                {
-                    <EditForm Model="_selectedSubscription" OnValidSubmit="@(Save)">
+            <FluentDivider Role="DividerRole.Separator" Orientation="Orientation.Vertical" Style="border-left: 1px solid rgba(0,0,0,0.2); height: auto;" />
 
-                        @if (_selectedSubscription != null)
-                        {
-                            <FluentStack Orientation="Orientation.Vertical">
-                                <FluentLabel Typo="Typography.PaneHeader">Abonnement bearbeiten: @_selectedSubscription?.Name</FluentLabel>
-
-                                <FluentTextField Label="Name" @bind-Value="@_selectedSubscription.Name" Required="true" />
-                                <FluentNumberField Label="Betrag" @bind-Value="_selectedSubscription.Amount" Required="true" />
-                                <FluentTextArea Cols="6" Style="width:100%;" Label="Memo" @bind-Value="_selectedSubscription.Memo" />
-
-                                <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
-                                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
-                                    <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="CancelEdit">Abbrechen</FluentButton>
-                                </FluentStack>
+            @* <--- rechte Seite (bearbeiten) ---/> *@
+            <FluentStack Orientation="Orientation.Vertical" Style="width: 100%;">
+                <FluentCard Style="width: 100%; height: 100%; padding: 16px;">
+                    @if (_selectedSubscription == null)
+                    {
+                        <FluentStack>
+                            <FluentLabel Typo="Typography.PaneHeader">Kein Eintrag ausgewählt</FluentLabel>
+                            <FluentSpacer />
+                            <FluentStack Orientation="Orientation.Horizontal">
+                                <FluentButton Appearance="Appearance.Accent" @onclick="NewSubscription">Neues Abonnement</FluentButton>
                             </FluentStack>
-                        }
-                    </EditForm>
-                }
+                        </FluentStack>
+                    }
+                    else if (_editMode)
+                    {
+                        <EditForm Model="_selectedSubscription" OnValidSubmit="@(Save)">
+
+                            @if (_selectedSubscription != null)
+                            {
+                                <FluentStack Orientation="Orientation.Vertical">
+                                    <FluentLabel Typo="Typography.PaneHeader">Abonnement bearbeiten: @_selectedSubscription?.Name</FluentLabel>
+
+                                    <FluentTextField Label="Name" @bind-Value="@_selectedSubscription.Name" Required="true" />
+                                    <FluentNumberField Label="Betrag" @bind-Value="_selectedSubscription.Amount" Required="true" />
+                                    <FluentTextArea Cols="6" Style="width:100%;" Label="Memo" @bind-Value="_selectedSubscription.Memo" />
+
+                                    <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
+                                        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
+                                        <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="CancelEdit">Abbrechen</FluentButton>
+                                    </FluentStack>
+                                </FluentStack>
+                            }
+                        </EditForm>
+                    }
+                </FluentCard>
             </FluentStack>
         </FluentStack>
     }
 </BasePage>
-
-
