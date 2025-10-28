@@ -54,5 +54,16 @@ namespace Andy.Persistent.Repositorys
             await _dbContext.SaveChangesAsync();
             return _mapper.MapToDto(entity);
         }
+
+        public async Task DeleteSubscriptionAsync(int subscriptionId)
+        {
+            var entity = await _dbContext.Subscriptions.FindAsync(subscriptionId);
+            if (entity is null)
+            {
+                return;
+            }
+            _dbContext.Subscriptions.Remove(entity);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

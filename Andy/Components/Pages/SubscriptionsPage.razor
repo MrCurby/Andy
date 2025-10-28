@@ -1,4 +1,5 @@
 ﻿@page "/Subscriptions"
+@rendermode InteractiveServer
 @using Andy.Core.DTOs
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
@@ -14,45 +15,71 @@
         {
             <FluentStack Orientation="Orientation.Horizontal">
                 @* <--- linke Seite (Übersicht) ---/>*@
-                <FluentStack Orientation="Orientation.Vertical">
+                <FluentStack Orientation="Orientation.Vertical" Style="width:60%;">
                     @* Aktive Einträge *@
                     <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
                         <FluentLabel Typo="Typography.PaneHeader">Aktive Einträge (@(SubscriptionList.Count(s => s.IsActive == true)))</FluentLabel>
                     </FluentStack>
 
-                    @foreach (var ListEntry in SubscriptionList.Where(sl => sl.IsActive == true))
-                    {
-                        <FluentStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Style="margin-bottom:10px;">
-                            <FluentStack>
-                                <FluentLabel Typo="Typography.PaneHeader">@ListEntry.Name</FluentLabel>
-                                <FluentLabel Typo="Typography.Body">@ListEntry.Memo</FluentLabel>
+                    @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == true))
+                    { 
+                        <FluentCard>
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.PaneHeader">@Subscription.Name</FluentLabel>
+                                <FluentLabel Typo="Typography.Body">@Subscription.Memo</FluentLabel>
+                                <FluentLabel Typo="Typography.Subject">@Subscription.Amount?.ToString("C")</FluentLabel>
                             </FluentStack>
-                            <FluentLabel Typo="Typography.Subject">@ListEntry.Amount?.ToString("C")</FluentLabel>
-                        </FluentStack>
+                            <FluentButton Appearance="Appearance.Neutral" Color="@(Color.Error.ToAttributeValue())" @onclick="() => DeleteSubscriptionAsync(Subscription)">Löschen</FluentButton>
+                        </FluentCard>
+                        //<FluentButton Appearance="Appearance.Outline" @onclick="() => EditSubscription(Subscription)">Bearbeiten</FluentButton>
                     }
 
                     <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.08); margin: 16px 0;" />
 
-                    @* Inaktive Einträge (ausgegraut) *@
+                    @* Inaktive Einträge *@
                     <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
                         <FluentLabel Typo="Typography.PaneHeader">Inaktive Einträge (@(SubscriptionList.Count(s => s.IsActive == false)))</FluentLabel>
                     </FluentStack>
 
-                    @foreach (var ListEntry in SubscriptionList.Where(sl => sl.IsActive == false))
+                    @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == false))
                     {
-                        <FluentStack class="inactive-entry" aria-disabled="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Style="margin-bottom:10px;">
-                            <FluentStack>
-                                <FluentLabel Typo="Typography.PaneHeader">@ListEntry.Name</FluentLabel>
-                                <FluentLabel Typo="Typography.Body">@ListEntry.Memo</FluentLabel>
+                        <FluentCard>
+                            <FluentStack Orientation="Orientation.Vertical" Class="inactive-entry">
+                                <FluentLabel Typo="Typography.PaneHeader">@((Subscription.Name ?? string.Empty).ToString())</FluentLabel>
+                                <FluentLabel Typo="Typography.Body">@Subscription.Memo</FluentLabel>
+                                <FluentLabel Typo="Typography.Subject">@Subscription.Amount?.ToString("C")</FluentLabel>
                             </FluentStack>
-                            <FluentLabel Typo="Typography.Subject">@ListEntry.Amount?.ToString("C")</FluentLabel>
-                        </FluentStack>
+                        </FluentCard>
                     }
                 </FluentStack>
 
                 @* <--- rechte Seite (bearbeiten) ---/>*@
-                <FluentStack Orientation="Orientation.Vertical">
-
+                <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; padding-left:16px;">
+                    @if (_selectedSubscription == null)
+                    {
+                        <FluentStack>
+                            <FluentLabel Typo="Typography.PaneHeader">Kein Eintrag ausgewählt</FluentLabel>
+                            <FluentSpacer/>
+                            <FluentStack Orientation="Orientation.Horizontal">
+                                <FluentButton Appearance="Appearance.Accent" @onclick="@NewSubscription">Neues Abonnement</FluentButton>
+                            </FluentStack>
+                        </FluentStack>
+                    }
+                    else if(_editMode)
+                    {
+                        <EditForm Model="_selectedSubscription" OnValidSubmit="@(Update)">
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.PaneHeader">Abonnement bearbeiten: @_selectedSubscription.Name</FluentLabel>
+                                <FluentTextField Label="Name" @bind-Value="_selectedSubscription.Name" Required="true" />
+                                <FluentNumberField Label="Betrag" @bind-Value="_selectedSubscription.Amount" Required="true"/>
+                                <FluentTextArea Cols="6" Style="width:100%;" Label="Memo" @bind-Value="_selectedSubscription.Memo"/>
+                                <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
+                                    <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
+                                    <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="CancelEdit">Abbrechen</FluentButton>
+                                </FluentStack>
+                            </FluentStack>
+                        </EditForm>
+                    }
                 </FluentStack>
             </FluentStack>
         }
@@ -76,5 +103,3 @@
         font-style: italic;
     }
 </style>
-
-

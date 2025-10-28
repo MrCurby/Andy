@@ -67,5 +67,20 @@ namespace Andy.Core.Services
                 throw;
             }
         }
+
+        public async Task DeleteSubscriptionAsync(int subscriptionId)
+        {
+            _logger.LogInformation("Method {MethodName} has been called.", nameof(DeleteSubscriptionAsync));
+            try
+            {
+                await _subscriptionRepository.DeleteSubscriptionAsync(subscriptionId);
+                _logger.LogInformation("Method {MethodName} completed successfully.", nameof(DeleteSubscriptionAsync));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred in {MethodName}.", nameof(DeleteSubscriptionAsync));
+                throw;
+            }
+        }
     }
 }

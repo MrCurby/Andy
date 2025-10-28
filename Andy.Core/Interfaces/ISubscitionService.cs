@@ -29,5 +29,12 @@ namespace Andy.Core.Interfaces
         /// <returns>A task that represents the asynchronous operation. The task result contains a SubscriptionDto representing
         /// the newly created subscription.</returns>
         Task<SubscriptionDto> AddSubscriptionAsync(SubscriptionDto subscriptionDto);
+
+        /// <summary>
+        /// Asynchronously deletes the subscription identified by the specified subscription ID.
+        /// </summary>
+        /// <param name="subscriptionId">The unique identifier of the subscription to delete. Must correspond to an existing subscription.</param>
+        /// <returns>A task that represents the asynchronous delete operation.</returns>
+        Task DeleteSubscriptionAsync(int subscriptionId);
     }
 }

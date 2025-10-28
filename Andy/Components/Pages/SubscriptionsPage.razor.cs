@@ -13,7 +13,8 @@ namespace Andy.Components.Pages
         [Inject] protected ILogger<SubscriptionsPage> Logger { get; set; } = default!;
         [Inject] protected SubscriptionMapper SubscriptionMapper { get; set; } = default!;
         protected IEnumerable<SubscriptionViewModel>? SubscriptionList;
-        private SubscriptionViewModel? _selectedSubscription;
+        private SubscriptionViewModel? _selectedSubscription = null;
+        private bool _editMode;
 
         protected override async Task OnInitializedAsync()
         {
@@ -23,9 +24,51 @@ namespace Andy.Components.Pages
 
         private async Task LoadData()
         {
-            var Subs = await SubscriptionService.GetAllSubscriptionsAsync();
-            SubscriptionList = SubscriptionMapper.MapToViewModelList(Subs);
+            try
+            {
+                Logger.LogInformation("Loading data...");
+                var Subs = await SubscriptionService.GetAllSubscriptionsAsync();
+                SubscriptionList = SubscriptionMapper.MapToViewModelList(Subs);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while loading data.");
+            }
             this.StateHasChanged();
+        }
+
+        private void NewSubscription()
+        {
+            _selectedSubscription = new SubscriptionViewModel();
+            _editMode = true;
+            this.StateHasChanged();
+        }
+
+        private async Task Update()
+        {
+            try
+            {
+                await this.LoadData();
+
+                bool subscriptionExists = _selectedSubscription != null &&
+                                          (SubscriptionList?.Any(s => s.Id == _selectedSubscription.Id) ?? false);
+
+                if (subscriptionExists)
+                {
+                    await this.UpdateSubscriptionAsync(_selectedSubscription);
+                }
+                else
+                {
+                    await this.AddSubscriptionAsync(_selectedSubscription);
+                }
+            }
+            finally
+            {
+                _editMode = false;
+                _selectedSubscription = null;
+                await this.LoadData();
+                this.StateHasChanged();
+            }
         }
 
         private async Task UpdateSubscriptionAsync(SubscriptionViewModel? subscription)
@@ -39,13 +82,12 @@ namespace Andy.Components.Pages
             try
             {
                 Logger.LogInformation("Updating subscription Id {Id}.", subscription.Id);
+
                 var dto = SubscriptionMapper.MapToDto(subscription);
+                dto.LastUpdated = DateTime.UtcNow;
                 await SubscriptionService.UpdateSubscriptionAsync(dto);
 
-                await this.LoadData();
-
                 Logger.LogInformation("Subscription Id {Id} updated successfully.", subscription.Id);
-                this.StateHasChanged();
             }
             catch (Exception ex)
             {
@@ -69,15 +111,23 @@ namespace Andy.Components.Pages
                 var createdDto = await SubscriptionService.AddSubscriptionAsync(dto);
 
                 Logger.LogInformation("Subscription created with Id {Id}.", createdDto?.Id);
-                await this.LoadData();
-
-                Logger.LogInformation("New subscription added successfully.");
-                this.StateHasChanged();
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error while adding new subscription with Name '{Name}'.", subscription.Name);
             }
+        }
+
+        private async Task DeleteSubscriptionAsync(SubscriptionViewModel? subscription)
+        {
+            await SubscriptionService.DeleteSubscriptionAsync(subscription?.Id ?? 0);
+            await InvokeAsync(this.LoadData);
+        }
+
+        private void CancelEdit(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+        {
+            _selectedSubscription = null;
+            _editMode = false;
         }
     }
 }
