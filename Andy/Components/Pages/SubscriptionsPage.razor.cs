@@ -9,18 +9,11 @@ namespace Andy.Components.Pages
 {
     public partial class SubscriptionsPage
     {
-        [Inject]
-        protected ISubscitionService SubscriptionService { get; set; } = default!;
-
-        [Inject]
-        protected ILogger<SubscriptionsPage> Logger { get; set; } = default!;
-
-        [Inject]
-        protected SubscriptionMapper SubscriptionMapper { get; set; } = default!;
-
+        [Inject] protected ISubscitionService SubscriptionService { get; set; } = default!;
+        [Inject] protected ILogger<SubscriptionsPage> Logger { get; set; } = default!;
+        [Inject] protected SubscriptionMapper SubscriptionMapper { get; set; } = default!;
         protected IEnumerable<SubscriptionViewModel>? SubscriptionList;
-
-        protected SubscriptionViewModel NewSubscription { get; set; } = new();
+        private SubscriptionViewModel? _selectedSubscription;
 
         protected override async Task OnInitializedAsync()
         {
@@ -77,7 +70,6 @@ namespace Andy.Components.Pages
 
                 Logger.LogInformation("Subscription created with Id {Id}.", createdDto?.Id);
                 await this.LoadData();
-                NewSubscription = new SubscriptionViewModel();
 
                 Logger.LogInformation("New subscription added successfully.");
                 this.StateHasChanged();
