@@ -8,12 +8,11 @@ namespace Andy.Core.Interfaces
     public interface ISubscitionService
     {
         /// <summary>
-        /// Asynchronously retrieves all subscriptions.
+        /// Asynchronously retrieves all available subscriptions.
         /// </summary>
-        /// <returns>
-        /// A task that represents the asynchronous operation. 
-        /// The task result contains an <see cref="IEnumerable{T}"/> of <see cref="SubscriptionDto"/>.
-        /// </returns>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a collection of <see
+        /// cref="SubscriptionDto"/> objects representing all subscriptions. The collection will be empty if no
+        /// subscriptions are found.</returns>
         Task<IEnumerable<SubscriptionDto>> GetAllSubscriptionsAsync();
 
         /// <summary>
@@ -22,5 +21,20 @@ namespace Andy.Core.Interfaces
         /// <param name="subscriptionDto">An object containing the updated subscription information. Cannot be null.</param>
         /// <returns>A task that represents the asynchronous update operation.</returns>
         Task UpdateSubscriptionAsync(SubscriptionDto subscriptionDto);
+
+        /// <summary>
+        /// Asynchronously adds a new subscription using the specified subscription details.
+        /// </summary>
+        /// <param name="subscriptionDto">An object containing the details of the subscription to add. Cannot be null.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a SubscriptionDto representing
+        /// the newly created subscription.</returns>
+        Task<SubscriptionDto> AddSubscriptionAsync(SubscriptionDto subscriptionDto);
+
+        /// <summary>
+        /// Asynchronously deletes the subscription identified by the specified subscription ID.
+        /// </summary>
+        /// <param name="subscriptionId">The unique identifier of the subscription to delete. Must correspond to an existing subscription.</param>
+        /// <returns>A task that represents the asynchronous delete operation.</returns>
+        Task DeleteSubscriptionAsync(int subscriptionId);
     }
 }
