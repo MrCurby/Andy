@@ -3,6 +3,7 @@ using Andy.Core.Interfaces;
 using Andy.Mapper;
 using Andy.ViewModels;
 using Microsoft.AspNetCore.Components;
+using System.ComponentModel.DataAnnotations;
 
 namespace Andy.Components.Pages
 {
@@ -17,16 +18,24 @@ namespace Andy.Components.Pages
         [Inject]
         protected SubscriptionMapper SubscriptionMapper { get; set; } = default!;
 
-        protected IEnumerable<SubscriptionViewModel>? Subscriptions;
+        protected IEnumerable<SubscriptionViewModel>? SubscriptionList;
+
+        protected SubscriptionViewModel NewSubscription { get; set; } = new();
 
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Subscriptions page initializing.");
-            var Subs = await SubscriptionService.GetAllSubscriptionsAsync();
-            Subscriptions = SubscriptionMapper.MapToViewModelList(Subs);
+            await this.LoadData();
         }
 
-        protected async Task UpdateSubscriptionAsync(SubscriptionViewModel? subscription)
+        private async Task LoadData()
+        {
+            var Subs = await SubscriptionService.GetAllSubscriptionsAsync();
+            SubscriptionList = SubscriptionMapper.MapToViewModelList(Subs);
+            this.StateHasChanged();
+        }
+
+        private async Task UpdateSubscriptionAsync(SubscriptionViewModel? subscription)
         {
             if (subscription is null)
             {
@@ -40,8 +49,7 @@ namespace Andy.Components.Pages
                 var dto = SubscriptionMapper.MapToDto(subscription);
                 await SubscriptionService.UpdateSubscriptionAsync(dto);
 
-                var subs = await SubscriptionService.GetAllSubscriptionsAsync();
-                Subscriptions = SubscriptionMapper.MapToViewModelList(subs);
+                await this.LoadData();
 
                 Logger.LogInformation("Subscription Id {Id} updated successfully.", subscription.Id);
                 this.StateHasChanged();
@@ -49,6 +57,34 @@ namespace Andy.Components.Pages
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error while updating subscription Id {Id}.", subscription.Id);
+            }
+        }
+
+        private async Task AddSubscriptionAsync(SubscriptionViewModel? subscription)
+        {
+            if (subscription is null)
+            {
+                Logger.LogWarning("AddSubscriptionAsync called with null subscription.");
+                return;
+            }
+
+            try
+            {
+                Logger.LogInformation("Adding new subscription with Name '{Name}'.", subscription.Name);
+
+                var dto = SubscriptionMapper.MapToDto(subscription);
+                var createdDto = await SubscriptionService.AddSubscriptionAsync(dto);
+
+                Logger.LogInformation("Subscription created with Id {Id}.", createdDto?.Id);
+                await this.LoadData();
+                NewSubscription = new SubscriptionViewModel();
+
+                Logger.LogInformation("New subscription added successfully.");
+                this.StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while adding new subscription with Name '{Name}'.", subscription.Name);
             }
         }
     }

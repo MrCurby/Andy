@@ -21,5 +21,13 @@ namespace Andy.Core.Interfaces
         /// <param name="subscriptionDto">An object containing the updated subscription information. Cannot be null.</param>
         /// <returns>A task that represents the asynchronous update operation.</returns>
         Task UpdateSubscriptionAsync(SubscriptionDto subscriptionDto);
+
+        /// <summary>
+        /// Asynchronously adds a new subscription using the specified subscription details.
+        /// </summary>
+        /// <param name="subscriptionDto">An object containing the details of the subscription to add. Cannot be null.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a SubscriptionDto representing
+        /// the newly created subscription.</returns>
+        Task<SubscriptionDto> AddSubscriptionAsync(SubscriptionDto subscriptionDto);
     }
 }

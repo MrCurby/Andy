@@ -1,7 +1,9 @@
 ﻿using Andy.Core.DTOs;
 using Andy.Core.Interfaces;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Andy.Core.Services
 {
@@ -40,6 +42,28 @@ namespace Andy.Core.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred in {MethodName}.", nameof(UpdateSubscriptionAsync));
+                throw;
+            }
+        }
+
+        public async Task<SubscriptionDto> AddSubscriptionAsync(SubscriptionDto subscriptionDto)
+        {
+            _logger.LogInformation("Method {MethodName} has been called.", nameof(AddSubscriptionAsync));
+
+            if (subscriptionDto == null)
+            {
+                throw new ArgumentNullException(nameof(subscriptionDto));
+            }
+
+            try
+            {
+                var created = await _subscriptionRepository.AddSubscriptionAsync(subscriptionDto);
+                _logger.LogInformation("Method {MethodName} completed successfully.", nameof(AddSubscriptionAsync));
+                return created;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred in {MethodName}.", nameof(AddSubscriptionAsync));
                 throw;
             }
         }

@@ -1,37 +1,80 @@
 ﻿@page "/Subscriptions"
 @using Andy.Core.DTOs
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 
-<FluentStack Orientation="Orientation.Vertical" Gap="16">
-    <FluentStack Orientation="Orientation.Horizontal">
-        <FluentIcon Style="margin:6px;" Value="@(new Icons.Regular.Size32.CoinMultiple())"></FluentIcon>
-        <h1>Meine Abonnements</h1>
-    </FluentStack>
-    
-    <p>Hier ist eine Übersicht über deine aktuellen Abonnements.</p>
+<BasePage Title="Subsciption" Icon="@(new Icons.Regular.Size28.CoinMultiple())">
+    <ChildContent>
+        @if (SubscriptionList == null)
+        {
+            <FluentProgressRing />
+            <p>Lade Abonnements...</p>
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Horizontal">
+                @* <--- linke Seite ---/>*@
+                <FluentStack Orientation="Orientation.Vertical">
+                    @* Aktive Einträge *@
+                    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
+                        <FluentLabel Typo="Typography.PaneHeader">Aktive Einträge (@(SubscriptionList.Count(s => s.IsActive == true)))</FluentLabel>
+                    </FluentStack>
 
-    @if (Subscriptions == null)
-    {
-        <FluentProgressRing />
-        <p>Lade Abonnements...</p>
+                    @foreach (var ListEntry in SubscriptionList.Where(sl => sl.IsActive == true))
+                    {
+                        <FluentStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Style="margin-bottom:10px;">
+                            <FluentStack>
+                                <FluentLabel Typo="Typography.PaneHeader">@ListEntry.Name</FluentLabel>
+                                <FluentLabel Typo="Typography.Body">@ListEntry.Memo</FluentLabel>
+                            </FluentStack>
+                            <FluentLabel Typo="Typography.Subject">@ListEntry.Amount?.ToString("C")</FluentLabel>
+                        </FluentStack>
+                    }
+
+                    <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.08); margin: 16px 0;" />
+
+                    @* Inaktive Einträge (ausgegraut) *@
+                    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
+                        <FluentLabel Typo="Typography.PaneHeader">Inaktive Einträge (@(SubscriptionList.Count(s => s.IsActive == false)))</FluentLabel>
+                    </FluentStack>
+
+                    @foreach (var ListEntry in SubscriptionList.Where(sl => sl.IsActive == false))
+                    {
+                        <FluentStack class="inactive-entry" aria-disabled="true" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Style="margin-bottom:10px;">
+                            <FluentStack>
+                                <FluentLabel Typo="Typography.PaneHeader">@ListEntry.Name</FluentLabel>
+                                <FluentLabel Typo="Typography.Body">@ListEntry.Memo</FluentLabel>
+                            </FluentStack>
+                            <FluentLabel Typo="Typography.Subject">@ListEntry.Amount?.ToString("C")</FluentLabel>
+                        </FluentStack>
+                    }
+                </FluentStack>
+
+                @* <--- rechte Seite ---/>*@
+                <FluentStack Orientation="Orientation.Vertical">
+
+                </FluentStack>
+            </FluentStack>
+        }
+    </ChildContent>
+</BasePage>
+
+<style>
+    .inactive-entry {
+        opacity: 0.6;
+        filter: grayscale(60%);
+        transition: opacity 150ms ease, filter 150ms ease;
     }
-    else
-    {
-        <FluentDataGrid Items="@(Subscriptions.AsQueryable())" GridTemplateColumns="1.5fr 1fr 1fr 0.5fr 2fr">
-            <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="Name" />
 
-            <TemplateColumn Title="Betrag" Align="Align.End">
-                @(context.Amount?.ToString("C") ?? "-")
-            </TemplateColumn>
-            
-            <TemplateColumn Title="Nächste Zahlung" Align="Align.Start">
-                @(context.NextPaymentDate?.ToString("d") ?? "-")
-            </TemplateColumn>
-            
-            <TemplateColumn Title="Aktiv" Align="Align.Center">
-                @(context.IsActive.HasValue ? (context.IsActive.Value ? "Ja" : "Nein") : "-")
-            </TemplateColumn>
-
-            <PropertyColumn Property="@(p => p.Memo)" Title="Notiz" />
-        </FluentDataGrid>
+    .inactive-entry:hover {
+        opacity: 0.85;
+        filter: grayscale(30%);
+        cursor: default;
     }
-</FluentStack>
+
+    .inactive-entry .fluent-label[typo="Typography.PaneHeader"] {
+        font-style: italic;
+    }
+</style>
+
+

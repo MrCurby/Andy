@@ -23,7 +23,7 @@ namespace Andy.Persistent.Repositorys
         public async Task UpdateSubscriptionAsync(SubscriptionDto subscriptionDto)
         {
             var entity = await _dbContext.Subscriptions.FindAsync(subscriptionDto.Id);
-            if (entity == null)
+            if (entity is null)
             {
                 return;
             }
@@ -37,7 +37,7 @@ namespace Andy.Persistent.Repositorys
 
         public async Task<SubscriptionDto> AddSubscriptionAsync(SubscriptionDto subscriptionDto)
         {
-            if (subscriptionDto == null)
+            if (subscriptionDto is null)
             {
                 throw new ArgumentNullException(nameof(subscriptionDto));
             }

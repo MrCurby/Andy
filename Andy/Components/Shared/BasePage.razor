@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Icons
+
+<FluentCard Style="height: fit-content;">
+    <FluentStack Orientation="Orientation.Horizontal">
+        <FluentIcon Style="margin:6px;"
+                    Value="@(Icon ?? new Icons.Regular.Size28.BookDefault())">
+        </FluentIcon>
+
+        <FluentLabel Typo="Typography.Header">
+            @Title
+        </FluentLabel>
+    </FluentStack>
+</FluentCard>
+
+<FluentCard Style="height:80vh;">
+    @ChildContent
+</FluentCard>
+
+@code {
+    [Parameter]
+    public Icon? Icon { get; set; } // Geändert von RenderFragment zu Icon
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
