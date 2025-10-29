@@ -2,7 +2,7 @@
 @using Microsoft.FluentUI.AspNetCore.Components
 @using Microsoft.FluentUI.AspNetCore.Components.Icons
 
-<FluentCard Style="height: fit-content;">
+<FluentCard Style="height: fit-content; z-index: 1; background-color: rgba(0, 0, 0, 0.5);">
     <FluentStack Orientation="Orientation.Horizontal">
         <FluentIcon Style="margin:6px;"
                     Value="@(Icon ?? new Icons.Regular.Size28.BookDefault())">
@@ -14,7 +14,7 @@
     </FluentStack>
 </FluentCard>
 
-<FluentCard Style="height:80vh;">
+<FluentCard Style="height:80vh; z-index: 1; background-color: rgba(0, 0, 0, 0.5);">
     @ChildContent
 </FluentCard>
 
