@@ -19,10 +19,10 @@ namespace Andy.Components.Pages
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("Subscriptions page initializing.");
-            await this.LoadData();
+            await this.LoadDataAsync();
         }
 
-        private async Task LoadData()
+        private async Task LoadDataAsync()
         {
             try
             {
@@ -51,6 +51,38 @@ namespace Andy.Components.Pages
             this.StateHasChanged();
         }
 
+        private async Task DeaktivateAsync(SubscriptionViewModel subscription)
+        {
+            try
+            {
+                Logger.LogInformation("Deactivating subscription Id {Id}.", subscription.Id);
+                subscription.IsActive = false;
+                await this.UpdateSubscriptionAsync(subscription);
+                Logger.LogInformation("Subscription Id {Id} deactivated successfully.", subscription.Id);
+                await this.LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while deactivating subscription Id {Id}.", subscription.Id);
+            }
+        }
+
+        private async Task AktivateAsync(SubscriptionViewModel subscription)
+        {
+            try
+            {
+                Logger.LogInformation("activating subscription Id {Id}.", subscription.Id);
+                subscription.IsActive = true;
+                await this.UpdateSubscriptionAsync(subscription);
+                Logger.LogInformation("Subscription Id {Id} activated successfully.", subscription.Id);
+                await this.LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while activating subscription Id {Id}.", subscription.Id);
+            }
+        }
+
         private async Task Save()
         {
             if (_selectedSubscription == null)
@@ -62,7 +94,7 @@ namespace Andy.Components.Pages
 
             try
             {
-                await this.LoadData();
+                await this.LoadDataAsync();
 
                 bool subscriptionExists = SubscriptionList?.Any(s => s.Id == _selectedSubscription.Id) ?? false;
 
@@ -83,7 +115,7 @@ namespace Andy.Components.Pages
 
                 _selectedSubscription = null;
 
-                await this.LoadData();
+                await this.LoadDataAsync();
 
                 this.StateHasChanged();
             }
@@ -140,7 +172,7 @@ namespace Andy.Components.Pages
         {
             await SubscriptionService.DeleteSubscriptionAsync(subscription?.Id ?? 0);
             _selectedSubscription = null;
-            await InvokeAsync(this.LoadData);
+            await InvokeAsync(this.LoadDataAsync);
         }
 
         private void CancelEdit(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
