@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\Shared\" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="electron.manifest.json">
