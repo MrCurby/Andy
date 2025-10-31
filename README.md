@@ -2,7 +2,7 @@
 
 Kurzbeschreibung
 ----------------
-`Andy` ist eine Blazor-Anwendung (Ziel: .NET 10), die dir eine kompakte Übersicht über wiederkehrende Ausgaben liefert — z. B. Abos, Verträge und Wohnen/Nebenkosten. Die UI ist bewusst auf schnelle Navigation und Wiederkehrendes (Subscriptions) ausgelegt; im Navigationsmenü (`Andy\Components\Layout\NavMenu.razor`) findest du bereits Menüpunkte wie „Abos“, „Verträge“ und „Wohnen & Nebenkosten“.
+`Andy` ist eine Blazor-Anwendung (Ziel: .NET 10), die dir eine kompakte Übersicht über wiederkehrende Ausgaben liefert — z. B. Abos, Verträge und Wohnen/Nebenkosten. Die UI ist auf schnelle Navigation und Wiederkehrendes (Subscriptions) ausgelegt.
 
 Zweck
 -----

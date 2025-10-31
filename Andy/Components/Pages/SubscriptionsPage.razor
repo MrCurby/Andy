@@ -37,7 +37,7 @@
 
                     @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == true))
                     {
-                        <FluentCard Style="padding: 8px 12px; width:98%;">
+                        <FluentCard Style="padding: 8px 12px; width: 100%; max-width: 400px; min-width: 250px; flex-grow: 1; display: flex; flex-direction: column;">
                             <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="justify-content:space-between; gap: 8px;">
                                 <FluentStack Orientation="Orientation.Vertical" Style="min-width:0; flex-grow:1;">
                                     <FluentLabel Typo="Typography.PaneHeader" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@Subscription.Name</FluentLabel>
