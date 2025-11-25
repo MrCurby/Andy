@@ -5,7 +5,6 @@
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 
 <style>
-    /* Responsive subscriptions layout */
     .subscriptions-layout {
         display: flex;
         gap: 16px;
@@ -16,7 +15,7 @@
     }
 
     .list-column {
-        flex: 1 1 380px; /* grow, shrink, basis */
+        flex: 1 1 380px;
         min-width: 300px;
         max-width: 65%;
         box-sizing: border-box;
@@ -29,13 +28,11 @@
         box-sizing: border-box;
     }
 
-    /* Scroll area for the left column; adapts to viewport height */
     .list-scroll {
         max-height: calc(100vh - 200px);
         overflow-y: auto;
     }
 
-    /* Card sizing preserved but responsive */
     .subscription-card {
         padding: 8px 12px;
         width: 100%;
@@ -46,13 +43,11 @@
         flex-direction: column;
     }
 
-    /* Ensure divider visually aligns */
     .vertical-divider {
         height: 80%;
         align-self: center;
     }
 
-    /* Small screens: stack vertically */
     @@media (max-width: 900px) {
         .list-column,
         .editor-column {
@@ -87,7 +82,6 @@
         }
         else
         {
-            @* Responsives Haupt-Layout *@
             <div class="subscriptions-layout">
                 @* Linke Spalte: Liste + Scrollbereich *@
                 <div class="list-column">
@@ -102,43 +96,10 @@
 
                         @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == true))
                         {
-                            <FluentCard Class="subscription-card">
-                                <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" Style="justify-content:space-between; gap: 8px;">
-                                    <FluentStack Orientation="Orientation.Vertical" Style="min-width:0; flex-grow:1;">
-                                        <FluentLabel Typo="Typography.PaneHeader" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@Subscription.Name</FluentLabel>
-                                        <FluentLabel Typo="Typography.Body" Style="overflow-wrap:break-word; color:var(--neutral-foreground-2);">@Subscription.Memo</FluentLabel>
-                                    </FluentStack>
-
-                                    <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.End" Style="gap:8px;">
-                                        <FluentLabel Typo="Typography.Subject" Style="text-align:right; white-space:nowrap;">@Subscription.Amount?.ToString("C")</FluentLabel>
-                                        <FluentStack Orientation="Orientation.Vertical" Style="gap:4px;">
-                                            <FluentButton Appearance="Appearance.Lightweight"
-                                                          Color="@(Color.Success.ToAttributeValue())"
-                                                          OnClick="() => Edit(Subscription)"
-                                                          Title="Bearbeiten"
-                                                          Style="padding:6px 8px; min-width:80px;">
-                                                Bearbeiten
-                                            </FluentButton>
-                                            <FluentButton Appearance="Appearance.Lightweight"
-                                                          Color="@(Color.Error.ToAttributeValue())"
-                                                          OnClick="() => DeleteSubscriptionAsync(Subscription)"
-                                                          Title="Löschen"
-                                                          Style="padding:6px 8px; min-width:80px;">
-                                                Löschen
-                                            </FluentButton>
-                                        </FluentStack>
-                                        @if (Subscription.IsActive == true)
-                                        {
-                                            <FluentButton Color="@Color.Success.ToAttributeValue()"
-                                                          IconStart="@(new Icons.Regular.Size28.Pause())"
-                                                          Appearance="Appearance.Accent"
-                                                          Style="height:60px;"
-                                                          OnClick="@(async () => await DeaktivateAsync(Subscription))">
-                                            </FluentButton>
-                                        }
-                                    </FluentStack>
-                                </FluentStack>
-                            </FluentCard>
+                            <SubscriptionCard Subscription="Subscription"
+                                              OnEdit="@(() => Edit(Subscription))"
+                                              OnDelete="@(() => DeleteSubscriptionAsync(Subscription))"
+                                              OnDeactivate="@(() => DeaktivateAsync(Subscription))" />
                         }
 
                         <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px; margin-top:12px;">
@@ -147,32 +108,14 @@
 
                         @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == false))
                         {
-                            <FluentCard Style="padding: 8px 12px;">
-                                <FluentStack Orientation="Orientation.Horizontal" Class="subscription-row inactive-entry" HorizontalAlignment="HorizontalAlignment.Center" Style="justify-content:space-between; gap: 8px;">
-                                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" Style="gap:8px; min-width:0;">
-                                        <FluentStack Orientation="Orientation.Vertical" Style="min-width:0; flex-grow:1;">
-                                            <FluentLabel Typo="Typography.PaneHeader" Style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@((Subscription.Name ?? string.Empty).ToString())</FluentLabel>
-                                            <FluentLabel Typo="Typography.Body" Style="overflow-wrap:break-word; color:var(--neutral-foreground-2);">@Subscription.Memo</FluentLabel>
-                                        </FluentStack>
-                                    </FluentStack>
-
-                                    <FluentLabel Typo="Typography.Subject" Style="min-width:80px; text-align:right;">@Subscription.Amount?.ToString("C")</FluentLabel>
-                                    @if (Subscription.IsActive == false)
-                                    {
-                                        <FluentButton Color="@Color.Success.ToAttributeValue()"
-                                                      IconStart="@(new Icons.Regular.Size28.Play())"
-                                                      Appearance="Appearance.Accent"
-                                                      Style="height:60px;"
-                                                      OnClick="@(async () => await AktivateAsync(Subscription))">
-                                        </FluentButton>
-                                    }
-                                </FluentStack>
-                            </FluentCard>
+                            <SubscriptionCard Subscription="Subscription"
+                                              OnEdit="@(() => Edit(Subscription))"
+                                              OnDelete="@(() => DeleteSubscriptionAsync(Subscription))"
+                                              OnActivate="@(() => AktivateAsync(Subscription))" />
                         }
                     </div>
                 </div>
 
-                @* divider (wird auf kleinen Bildschirmen ausgeblendet) *@
                 <FluentDivider Class="vertical-divider" Orientation="Orientation.Vertical" Style="margin:0 8px;" />
 
                 @* Rechte Spalte: Editor-Komponente *@
