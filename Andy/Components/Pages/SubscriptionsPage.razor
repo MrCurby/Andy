@@ -110,40 +110,11 @@
 
                 <FluentDivider Orientation="Orientation.Vertical" Style="height: 80%;" />
 
-                @* <--- rechte Seite (bearbeiten) ---/> *@
-                <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; padding: 16px;">
-                    <FluentCard Style="width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start;">
-                        @if (_selectedSubscription == null)
-                        {
-                            <FluentStack Orientation="Orientation.Horizontal" Style="width: 100%; justify-content: space-between; margin-bottom: 16px;">
-                                <FluentLabel Typo="Typography.PaneHeader"
-                                             Style="text-align: center; flex-grow: 1;">
-                                    Kein Eintrag ausgewählt
-                                </FluentLabel>
-                            </FluentStack>
-                        }
-                        else if (_editMode)
-                        {
-                            <EditForm Model="_selectedSubscription" OnValidSubmit="@(Save)">
-                                @if (_selectedSubscription != null)
-                                {
-                                    <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; max-width: 600px; align-items: flex-start;">
-                                        <FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom: 16px;">Abonnement bearbeiten: @_selectedSubscription?.Name</FluentLabel>
-
-                                        <FluentTextField Label="Name" @bind-Value="@_selectedSubscription.Name" Required="true" Style="width: 100%; margin-bottom: 12px;" />
-                                        <FluentNumberField Label="Betrag" @bind-Value="_selectedSubscription.Amount" Required="true" Min="0" Style="width: 100%; margin-bottom: 12px;" />
-                                        <FluentTextArea Cols="6" Style="width: 100%; margin-bottom: 12px;" Label="Memo" @bind-Value="_selectedSubscription.Memo" />
-
-                                        <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
-                                            <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
-                                            <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="CancelEdit">Abbrechen</FluentButton>
-                                        </FluentStack>
-                                    </FluentStack>
-                                }
-                            </EditForm>
-                        }
-                    </FluentCard>
-                </FluentStack>
+                @* Rechte Seite: ausgelagerte Editor-Komponente *@
+                <SubscriptionEditor SelectedSubscription="_selectedSubscription"
+                                    EditMode="_editMode"
+                                    OnSave="Save"
+                                    OnCancel="CancelEdit" />
             </FluentStack>
         }
     </ChildContent>
