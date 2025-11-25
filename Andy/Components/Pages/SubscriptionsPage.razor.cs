@@ -9,9 +9,6 @@ namespace Andy.Components.Pages
 {
     public partial class SubscriptionsPage
     {
-        [Inject] protected ISubscitionService SubscriptionService { get; set; } = default!;
-        [Inject] protected ILogger<SubscriptionsPage> Logger { get; set; } = default!;
-        [Inject] protected SubscriptionMapper SubscriptionMapper { get; set; } = default!;
         protected IEnumerable<SubscriptionViewModel>? SubscriptionList;
         private SubscriptionViewModel? _selectedSubscription = null;
         private bool _editMode;
@@ -83,7 +80,7 @@ namespace Andy.Components.Pages
             }
         }
 
-        private async Task Save()
+        private async Task SaveAsync()
         {
             if (_selectedSubscription == null)
             {
