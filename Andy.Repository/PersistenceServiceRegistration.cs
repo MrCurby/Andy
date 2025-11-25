@@ -1,6 +1,6 @@
 ﻿using Andy.Core.Interfaces;
 using Andy.Persistent.Mapper;
-using Andy.Persistent.Repositorys;
+using Andy.Persistent.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

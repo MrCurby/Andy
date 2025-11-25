@@ -1,13 +1,12 @@
 ﻿using Andy.Core;
 using Andy.Core.DTOs;
 using Andy.Persistent.Mapper;
-using Andy.Persistent;
 using Andy.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 
-namespace Andy.Persistent.Repositorys
+namespace Andy.Persistent.Repositories
 {
     public class SubscriptionRepository(AndyDbContext dbContext, SubscriptionMapper mapper) : ISubscriptionRepository
     {
