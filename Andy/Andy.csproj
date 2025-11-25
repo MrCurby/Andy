@@ -22,7 +22,6 @@
     <ProjectReference Include="..\Andy.Repository\Andy.Persistent.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Components\Shared\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
