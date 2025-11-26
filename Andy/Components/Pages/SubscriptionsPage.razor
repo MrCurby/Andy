@@ -3,75 +3,16 @@
 @using Andy.Core.DTOs
 @using Andy.Core.Interfaces
 @using Andy.Mapper
+@using Andy.ViewModels
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
+
 @inject ILogger<SubscriptionsPage> Logger
 @inject SubscriptionMapper SubscriptionMapper
 @inject ISubscitionService SubscriptionService
+@inject IJSRuntime JSRuntime
 
-<style>
-    .subscriptions-layout {
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .list-column {
-        flex: 1 1 380px;
-        min-width: 300px;
-        max-width: 65%;
-        box-sizing: border-box;
-    }
-
-    .editor-column {
-        flex: 1 1 360px;
-        min-width: 300px;
-        max-width: 35%;
-        box-sizing: border-box;
-    }
-
-    .list-scroll {
-        max-height: calc(100vh - 200px);
-        overflow-y: auto;
-    }
-
-    .subscription-card {
-        padding: 8px 12px;
-        width: 100%;
-        max-width: 400px;
-        min-width: 250px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .vertical-divider {
-        height: 80%;
-        align-self: center;
-    }
-
-    @@media (max-width: 900px) {
-        .list-column,
-        .editor-column {
-            flex-basis: 100%;
-            max-width: 100%;
-            min-width: 0;
-        }
-
-        .list-scroll {
-            max-height: none;
-        }
-
-        .vertical-divider {
-            display: none;
-        }
-    }
-</style>
-
-<BasePage Title="Subsciption" Icon="@(new Icons.Regular.Size28.CoinMultiple())">
+<BasePage Title="Abonnements" Icon="@(new Icons.Regular.Size28.CoinMultiple())">
     <TitleContent>
         <FluentButton Appearance="Appearance.Accent"
                       @onclick="NewSubscription"
@@ -87,50 +28,92 @@
         }
         else
         {
-            <div class="subscriptions-layout">
-                @* Linke Spalte: Liste + Scrollbereich *@
-                <div class="list-column">
-                    <div class="list-scroll">
+            <FluentGrid Spacing="3" AdaptiveRendering="true" Style="width: 100%; margin-top: 10px; padding-bottom: 50px;">
+
+                @* --- Linke Spalte: Liste --- *@
+                <FluentGridItem xs="12" md="8">
+                    <FluentCard Style="max-height: 75vh; overflow-y: auto;">
+
                         <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
-                            <FluentLabel Typo="Typography.PaneHeader">Gesamtsumme: @SubscriptionList.Where(s => s.IsActive == true).Sum(s => s.Amount ?? 0).ToString("C") (Monatlich)</FluentLabel>
+                            <FluentLabel Typo="Typography.PaneHeader">
+                                Gesamtsumme: @SubscriptionList.Where(s => s.IsActive == true).Sum(s => s.Amount ?? 0).ToString("C") (Monatlich)
+                            </FluentLabel>
                         </FluentStack>
 
                         <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
-                            <FluentLabel Typo="Typography.PaneHeader">Aktive Einträge (@(SubscriptionList.Count(s => s.IsActive == true)))</FluentLabel>
+                            <FluentLabel Typo="Typography.PaneHeader">
+                                Aktive Einträge (@(SubscriptionList.Count(s => s.IsActive == true)))
+                            </FluentLabel>
                         </FluentStack>
 
                         @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == true))
                         {
-                            <SubscriptionCard Subscription="Subscription"
-                                              OnEdit="@(() => Edit(Subscription))"
-                                              OnDelete="@(() => DeleteSubscriptionAsync(Subscription))"
-                                              OnDeactivate="@(() => DeaktivateAsync(Subscription))" />
+                            <div style="margin-bottom: 12px;">
+                                <SubscriptionCard Subscription="Subscription"
+                                                  OnEdit="@(() => Edit(Subscription))"
+                                                  OnDelete="@(() => DeleteSubscriptionAsync(Subscription))"
+                                                  OnDeactivate="@(() => DeaktivateAsync(Subscription))" />
+                            </div>
                         }
 
-                        <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px; margin-top:12px;">
-                            <FluentLabel Typo="Typography.PaneHeader">Inaktive Einträge (@(SubscriptionList.Count(s => s.IsActive == false)))</FluentLabel>
+                        <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px; margin-top:24px;">
+                            <FluentLabel Typo="Typography.PaneHeader">
+                                Inaktive Einträge (@(SubscriptionList.Count(s => s.IsActive == false)))
+                            </FluentLabel>
                         </FluentStack>
 
                         @foreach (var Subscription in SubscriptionList.Where(sl => sl.IsActive == false))
                         {
-                            <SubscriptionCard Subscription="Subscription"
-                                              OnEdit="@(() => Edit(Subscription))"
-                                              OnDelete="@(() => DeleteSubscriptionAsync(Subscription))"
-                                              OnActivate="@(() => AktivateAsync(Subscription))" />
+                            <div style="margin-bottom: 12px;">
+                                <SubscriptionCard Subscription="Subscription"
+                                                  OnEdit="@(() => Edit(Subscription))"
+                                                  OnDelete="@(() => DeleteSubscriptionAsync(Subscription))"
+                                                  OnActivate="@(() => AktivateAsync(Subscription))" />
+                            </div>
+                        }
+                    </FluentCard>
+                </FluentGridItem>
+
+                @* --- Rechte Spalte: Editor (Desktop) --- *@
+                <FluentGridItem xs="12" md="4" HiddenWhen="GridItemHidden.SmAndDown">
+                    <div style="position: sticky; top: 20px;">
+                        @if (_selectedSubscription != null)
+                        {
+                            <FluentCard Style="width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start;">
+                                <SubscriptionEditor SelectedSubscription="_selectedSubscription"
+                                                    EditMode="_editMode"
+                                                    OnSave="SaveAsync"
+                                                    OnCancel="CancelEdit" />
+                            </FluentCard>
+                        }
+                        else
+                        {
+                            <FluentCard Style="padding: 20px; text-align: center; color: var(--neutral-foreground-2);">
+                                <FluentIcon Value="@(new Icons.Regular.Size24.CursorClick())" />
+                                <p style="margin-top: 10px;">Auswahl leer</p>
+                            </FluentCard>
                         }
                     </div>
-                </div>
+                </FluentGridItem>
 
-                <FluentDivider Class="vertical-divider" Orientation="Orientation.Vertical" Style="margin:0 8px;" />
+            </FluentGrid>
+        }
 
-                @* Rechte Spalte: Editor-Komponente *@
-                <div class="editor-column">
+        @* --- Dialog für Mobile Bearbeitung --- *@
+        <FluentDialog @bind-Hidden="@_dialogHidden"
+                      Modal="true"
+                      TrapFocus="true"
+                      AriaLabel="Abonnement bearbeiten"
+                      Style="max-width: 90vw; width: 500px;">
+            @if (_selectedSubscription != null)
+            {
+                <div style="padding: 16px;">
                     <SubscriptionEditor SelectedSubscription="_selectedSubscription"
                                         EditMode="_editMode"
                                         OnSave="SaveAsync"
                                         OnCancel="CancelEdit" />
                 </div>
-            </div>
-        }
+            }
+        </FluentDialog>
     </ChildContent>
 </BasePage>
