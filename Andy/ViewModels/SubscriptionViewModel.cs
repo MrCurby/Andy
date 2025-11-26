@@ -9,7 +9,7 @@ namespace Andy.ViewModels
         [Required]
         public string? Name { get; set; }
         [Required]
-        public double? Amount { get; set; }
+        public double Amount { get; set; }
         public bool? IsActive { get; set; } = true;
         public DateTime? NextPaymentDate { get; set; }
         public DateTime? LastUpdated { get; set; } = DateTime.UtcNow;

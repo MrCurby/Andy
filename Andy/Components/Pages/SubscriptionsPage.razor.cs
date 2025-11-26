@@ -54,13 +54,13 @@ namespace Andy.Components.Pages
         private async Task NewSubscription()
         {
             _selectedSubscription = new SubscriptionViewModel();
-            await OpenEditorResponsive();
+            await this.OpenEditorResponsive();
         }
 
         private async Task Edit(SubscriptionViewModel subscription)
         {
             _selectedSubscription = subscription;
-            await OpenEditorResponsive();
+            await this.OpenEditorResponsive();
         }
 
         private async Task DeaktivateAsync(SubscriptionViewModel subscription)
@@ -108,13 +108,13 @@ namespace Andy.Components.Pages
             }
             finally
             {
-                await CloseEditor();
+                await this.CloseEditor();
             }
         }
 
         private async Task CancelEdit()
         {
-            await CloseEditor();
+            await this.CloseEditor();
         }
 
         private async Task CloseEditor()
@@ -124,7 +124,7 @@ namespace Andy.Components.Pages
             _selectedSubscription = null;
 
             await this.LoadDataAsync();
-            await InvokeAsync(StateHasChanged);
+            await this.InvokeAsync(StateHasChanged);
         }
 
         private async Task UpdateSubscriptionAsync(SubscriptionViewModel? subscription)
@@ -149,11 +149,11 @@ namespace Andy.Components.Pages
 
             if (_selectedSubscription?.Id == subscription.Id)
             {
-                await CloseEditor();
+                await this.CloseEditor();
             }
             else
             {
-                await InvokeAsync(this.LoadDataAsync);
+                await this.InvokeAsync(this.LoadDataAsync);
             }
         }
     }
