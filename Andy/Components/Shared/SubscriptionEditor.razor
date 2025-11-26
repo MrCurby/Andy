@@ -30,13 +30,15 @@
                         @((SelectedSubscription.Id == 0) ? "Neues Abonnement" : "Abonnement bearbeiten")
                     </FluentLabel>
 
-                    <FluentTextField Label="Name"
-                                     @bind-Value="SelectedSubscription.Name"
-                                     Required="true"
-                                     Style="width: 100%; margin-bottom: 12px;" />
+                    <div style="width: 100%;">
+                        <FluentTextField Label="Name"
+                                         @bind-Value="SelectedSubscription.Name"
+                                         Required="true"
+                                         Style="width: 100%; margin-bottom: 12px;" />
+                        <FluentValidationMessage For="@(() => SelectedSubscription.Name)" Style="color: var(--error);" />
+                    </div>
 
-                    @* Wir lassen Step="any", damit die Pfeile (Spinner) funktionieren *@
-                    <div style="width: 100%; margin-bottom: 12px;">
+                    <div style="width: 100%;">
                         <FluentNumberField Label="Betrag"
                                            @bind-Value="SelectedSubscription.Amount"
                                            Step="any"
