@@ -1,32 +1,62 @@
 @using Andy.ViewModels
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
+@inject ILogger<SubscriptionEditor> Logger
 
 <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; padding: 16px;">
     @if (SelectedSubscription == null)
     {
         <FluentStack Orientation="Orientation.Horizontal" Style="width: 100%; justify-content: space-between; margin-bottom: 16px;">
-            <FluentLabel Typo="Typography.PaneHeader"
-                         Style="text-align: center; flex-grow: 1;">
+            <FluentLabel Typo="Typography.PaneHeader" Style="text-align: center; flex-grow: 1;">
                 Kein Eintrag ausgewählt
             </FluentLabel>
         </FluentStack>
     }
     else if (EditMode)
     {
-        <EditForm Model="SelectedSubscription" OnValidSubmit="@(async () => await OnSave.InvokeAsync())">
+        <EditForm Model="SelectedSubscription"
+                  OnValidSubmit="@(async () => await OnSave.InvokeAsync())"
+                  OnInvalidSubmit="HandleInvalidSubmit"
+                  AdditionalAttributes="@(new Dictionary<string, object> { { "novalidate", "novalidate" } })">
+
+            <DataAnnotationsValidator />
+            <FluentValidationSummary Style="color: var(--error); margin-bottom: 10px;" />
+
             @if (SelectedSubscription != null)
             {
                 <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; max-width: 600px; align-items: flex-start;">
-                    <FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom: 16px;">Abonnement bearbeiten: @SelectedSubscription?.Name</FluentLabel>
 
-                    <FluentTextField Label="Name" @bind-Value="SelectedSubscription.Name" Required="true" Style="width: 100%; margin-bottom: 12px;" />
-                    <FluentNumberField Label="Betrag" @bind-Value="SelectedSubscription.Amount" Required="true" Min="0" Style="width: 100%; margin-bottom: 12px;" />
-                    <FluentTextArea Cols="6" Style="width: 100%; margin-bottom: 12px;" Label="Memo" @bind-Value="SelectedSubscription.Memo" />
+                    <FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom: 16px;">
+                        @((SelectedSubscription.Id == 0) ? "Neues Abonnement" : "Abonnement bearbeiten")
+                    </FluentLabel>
+
+                    <div style="width: 100%;">
+                        <FluentTextField Label="Name"
+                                         @bind-Value="SelectedSubscription.Name"
+                                         Required="true"
+                                         Style="width: 100%; margin-bottom: 12px;" />
+                        <FluentValidationMessage For="@(() => SelectedSubscription.Name)" Style="color: var(--error);" />
+                    </div>
+
+                    <div style="width: 100%;">
+                        <FluentNumberField Label="Betrag"
+                                           @bind-Value="SelectedSubscription.Amount"
+                                           Step="any"
+                                           Required="true"
+                                           Min="0"
+                                           Style="width: 100%;" />
+
+                        <FluentValidationMessage For="@(() => SelectedSubscription.Amount)" Style="color: var(--error);" />
+                    </div>
+
+                    <FluentTextArea Cols="6"
+                                    Style="width: 100%; margin-bottom: 12px;"
+                                    Label="Memo"
+                                    @bind-Value="SelectedSubscription.Memo" />
 
                     <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
                         <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
-                        <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="@(async (e) => await OnCancel.InvokeAsync(e))">Abbrechen</FluentButton>
+                        <FluentButton Type="ButtonType.Button" Appearance="Appearance.Neutral" @onclick="@(async (e) => await OnCancel.InvokeAsync(e))">Abbrechen</FluentButton>
                     </FluentStack>
                 </FluentStack>
             }
@@ -40,4 +70,13 @@
 
     [Parameter] public EventCallback OnSave { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnCancel { get; set; }
+
+    private void HandleInvalidSubmit(EditContext context)
+    {
+        Logger.LogWarning("Speichern blockiert! Validierungsfehler:");
+        foreach (var message in context.GetValidationMessages())
+        {
+            Logger.LogWarning("- {Message}", message);
+        }
+    }
 }

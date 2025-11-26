@@ -36,7 +36,7 @@
 
                         <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom:12px;">
                             <FluentLabel Typo="Typography.PaneHeader">
-                                Gesamtsumme: @SubscriptionList.Where(s => s.IsActive == true).Sum(s => s.Amount ?? 0).ToString("C") (Monatlich)
+                                Gesamtsumme: @SubscriptionList.Where(s => s.IsActive == true).Sum(s => s.Amount).ToString("C") (Monatlich)
                             </FluentLabel>
                         </FluentStack>
 

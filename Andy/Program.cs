@@ -62,6 +62,14 @@ namespace Andy
 
             app.UseAntiforgery();
 
+            var supportedCultures = new[] { "de-DE" };
+            var localizationOptions = new RequestLocalizationOptions()
+                .SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+
+            app.UseRequestLocalization(localizationOptions);
+
             app.MapStaticAssets();
             app.MapRazorComponents<Andy.Components.App>()
                 .AddInteractiveServerRenderMode();
