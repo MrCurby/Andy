@@ -3,37 +3,35 @@
 @using Microsoft.AspNetCore.Components.Web
 
 <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; padding: 16px;">
-    <FluentCard Style="width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start;">
-        @if (SelectedSubscription == null)
-        {
-            <FluentStack Orientation="Orientation.Horizontal" Style="width: 100%; justify-content: space-between; margin-bottom: 16px;">
-                <FluentLabel Typo="Typography.PaneHeader"
-                             Style="text-align: center; flex-grow: 1;">
-                    Kein Eintrag ausgewählt
-                </FluentLabel>
-            </FluentStack>
-        }
-        else if (EditMode)
-        {
-            <EditForm Model="SelectedSubscription" OnValidSubmit="@(async () => await OnSave.InvokeAsync())">
-                @if (SelectedSubscription != null)
-                {
-                    <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; max-width: 600px; align-items: flex-start;">
-                        <FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom: 16px;">Abonnement bearbeiten: @SelectedSubscription?.Name</FluentLabel>
+    @if (SelectedSubscription == null)
+    {
+        <FluentStack Orientation="Orientation.Horizontal" Style="width: 100%; justify-content: space-between; margin-bottom: 16px;">
+            <FluentLabel Typo="Typography.PaneHeader"
+                         Style="text-align: center; flex-grow: 1;">
+                Kein Eintrag ausgewählt
+            </FluentLabel>
+        </FluentStack>
+    }
+    else if (EditMode)
+    {
+        <EditForm Model="SelectedSubscription" OnValidSubmit="@(async () => await OnSave.InvokeAsync())">
+            @if (SelectedSubscription != null)
+            {
+                <FluentStack Orientation="Orientation.Vertical" Style="width: 100%; max-width: 600px; align-items: flex-start;">
+                    <FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom: 16px;">Abonnement bearbeiten: @SelectedSubscription?.Name</FluentLabel>
 
-                        <FluentTextField Label="Name" @bind-Value="SelectedSubscription.Name" Required="true" Style="width: 100%; margin-bottom: 12px;" />
-                        <FluentNumberField Label="Betrag" @bind-Value="SelectedSubscription.Amount" Required="true" Min="0" Style="width: 100%; margin-bottom: 12px;" />
-                        <FluentTextArea Cols="6" Style="width: 100%; margin-bottom: 12px;" Label="Memo" @bind-Value="SelectedSubscription.Memo" />
+                    <FluentTextField Label="Name" @bind-Value="SelectedSubscription.Name" Required="true" Style="width: 100%; margin-bottom: 12px;" />
+                    <FluentNumberField Label="Betrag" @bind-Value="SelectedSubscription.Amount" Required="true" Min="0" Style="width: 100%; margin-bottom: 12px;" />
+                    <FluentTextArea Cols="6" Style="width: 100%; margin-bottom: 12px;" Label="Memo" @bind-Value="SelectedSubscription.Memo" />
 
-                        <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
-                            <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
-                            <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="@(async (e) => await OnCancel.InvokeAsync(e))">Abbrechen</FluentButton>
-                        </FluentStack>
+                    <FluentStack Orientation="Orientation.Horizontal" Style="margin-top:12px; gap:8px;">
+                        <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Speichern</FluentButton>
+                        <FluentButton Type="ButtonType.Button" Appearance="Appearance.Accent" @onclick="@(async (e) => await OnCancel.InvokeAsync(e))">Abbrechen</FluentButton>
                     </FluentStack>
-                }
-            </EditForm>
-        }
-    </FluentCard>
+                </FluentStack>
+            }
+        </EditForm>
+    }
 </FluentStack>
 
 @code {

@@ -3,6 +3,7 @@ using Andy.Core.Interfaces;
 using Andy.Mapper;
 using Andy.ViewModels;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.ComponentModel.DataAnnotations;
 
 namespace Andy.Components.Pages
@@ -12,6 +13,7 @@ namespace Andy.Components.Pages
         protected IEnumerable<SubscriptionViewModel>? SubscriptionList;
         private SubscriptionViewModel? _selectedSubscription = null;
         private bool _editMode;
+        private bool _dialogHidden = true;
 
         protected override async Task OnInitializedAsync()
         {
@@ -34,33 +36,44 @@ namespace Andy.Components.Pages
             this.StateHasChanged();
         }
 
-        private void NewSubscription()
+        private async Task OpenEditorResponsive()
         {
-            _selectedSubscription = new SubscriptionViewModel();
             _editMode = true;
-            this.StateHasChanged();
+            var width = await JSRuntime.InvokeAsync<int>("eval", "window.innerWidth");
+
+            if (width < 960)
+            {
+                _dialogHidden = false;
+            }
+            else
+            {
+                _dialogHidden = true;
+            }
         }
 
-        private void Edit(SubscriptionViewModel subscription)
-        { 
+        private async Task NewSubscription()
+        {
+            _selectedSubscription = new SubscriptionViewModel();
+            await OpenEditorResponsive();
+        }
+
+        private async Task Edit(SubscriptionViewModel subscription)
+        {
             _selectedSubscription = subscription;
-            _editMode = true;
-            this.StateHasChanged();
+            await OpenEditorResponsive();
         }
 
         private async Task DeaktivateAsync(SubscriptionViewModel subscription)
         {
             try
             {
-                Logger.LogInformation("Deactivating subscription Id {Id}.", subscription.Id);
                 subscription.IsActive = false;
                 await this.UpdateSubscriptionAsync(subscription);
-                Logger.LogInformation("Subscription Id {Id} deactivated successfully.", subscription.Id);
                 await this.LoadDataAsync();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error while deactivating subscription Id {Id}.", subscription.Id);
+                Logger.LogError(ex, "Error deactivating subscription.");
             }
         }
 
@@ -68,114 +81,80 @@ namespace Andy.Components.Pages
         {
             try
             {
-                Logger.LogInformation("activating subscription Id {Id}.", subscription.Id);
                 subscription.IsActive = true;
                 await this.UpdateSubscriptionAsync(subscription);
-                Logger.LogInformation("Subscription Id {Id} activated successfully.", subscription.Id);
                 await this.LoadDataAsync();
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error while activating subscription Id {Id}.", subscription.Id);
+                Logger.LogError(ex, "Error activating subscription.");
             }
         }
 
         private async Task SaveAsync()
         {
-            if (_selectedSubscription == null)
-            {
-                _editMode = false;
-                this.StateHasChanged();
-                return;
-            }
+            if (_selectedSubscription == null) { _editMode = false; return; }
 
             try
             {
-                await this.LoadDataAsync();
-
-                bool subscriptionExists = SubscriptionList?.Any(s => s.Id == _selectedSubscription.Id) ?? false;
-
-                if (subscriptionExists)
-                {
-                    await this.UpdateSubscriptionAsync(_selectedSubscription);
-                }
-                else
-                {
+                if (_selectedSubscription.Id <= 0)
                     await this.AddSubscriptionAsync(_selectedSubscription);
-                }
+                else
+                    await this.UpdateSubscriptionAsync(_selectedSubscription);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error while saving subscription.");
             }
             finally
             {
-                _editMode = false;
-
-                this.StateHasChanged();
-
-                _selectedSubscription = null;
-
-                await this.LoadDataAsync();
-
-                this.StateHasChanged();
+                await CloseEditor();
             }
+        }
+
+        private async Task CancelEdit()
+        {
+            await CloseEditor();
+        }
+
+        private async Task CloseEditor()
+        {
+            _dialogHidden = true;
+            _editMode = false;
+            _selectedSubscription = null;
+
+            await this.LoadDataAsync();
+            await InvokeAsync(StateHasChanged);
         }
 
         private async Task UpdateSubscriptionAsync(SubscriptionViewModel? subscription)
         {
-            if (subscription is null)
-            {
-                Logger.LogWarning("UpdateSubscriptionAsync called with null subscription.");
-                return;
-            }
-
-            try
-            {
-                Logger.LogInformation("Updating subscription Id {Id}.", subscription.Id);
-
-                var dto = SubscriptionMapper.MapToDto(subscription);
-                dto.LastUpdated = DateTime.UtcNow;
-                await SubscriptionService.UpdateSubscriptionAsync(dto);
-
-                Logger.LogInformation("Subscription Id {Id} updated successfully.", subscription.Id);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error while updating subscription Id {Id}.", subscription.Id);
-            }
+            if (subscription is null) return;
+            var dto = SubscriptionMapper.MapToDto(subscription);
+            dto.LastUpdated = DateTime.UtcNow;
+            await SubscriptionService.UpdateSubscriptionAsync(dto);
         }
 
         private async Task AddSubscriptionAsync(SubscriptionViewModel? subscription)
         {
-            if (subscription is null)
-            {
-                Logger.LogWarning("AddSubscriptionAsync called with null subscription.");
-                return;
-            }
-
-            try
-            {
-                Logger.LogInformation("Adding new subscription with Name '{Name}'.", subscription.Name);
-
-                var dto = SubscriptionMapper.MapToDto(subscription);
-                var createdDto = await SubscriptionService.AddSubscriptionAsync(dto);
-
-                Logger.LogInformation("Subscription created with Id {Id}.", createdDto?.Id);
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex, "Error while adding new subscription with Name '{Name}'.", subscription.Name);
-            }
+            if (subscription is null) return;
+            var dto = SubscriptionMapper.MapToDto(subscription);
+            await SubscriptionService.AddSubscriptionAsync(dto);
         }
 
         private async Task DeleteSubscriptionAsync(SubscriptionViewModel? subscription)
         {
-            await SubscriptionService.DeleteSubscriptionAsync(subscription?.Id ?? 0);
-            _selectedSubscription = null;
-            await InvokeAsync(this.LoadDataAsync);
-        }
+            if (subscription == null) return;
+            await SubscriptionService.DeleteSubscriptionAsync(subscription.Id);
 
-        private void CancelEdit(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
-        {
-            _selectedSubscription = null;
-            _editMode = false;
+            if (_selectedSubscription?.Id == subscription.Id)
+            {
+                await CloseEditor();
+            }
+            else
+            {
+                await InvokeAsync(this.LoadDataAsync);
+            }
         }
     }
 }
