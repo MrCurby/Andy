@@ -5,18 +5,18 @@ using System.Text;
 
 namespace Andy.Core.Interfaces
 {
-    public partial interface IContractRepository
+    public interface IContractService
     {
         /// <summary>
         /// Asynchronously retrieves all available Contracts.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation. The task result contains a collection of <see
-        /// cref="ContractDto"/> objects representing all Contracts. The collection is empty if no Contracts
-        /// are found.</returns>
+        /// cref="ContractDto"/> objects representing all Contracts. The collection will be empty if no
+        /// Contracts are found.</returns>
         Task<IEnumerable<ContractDto>> GetAllContractsAsync();
 
         /// <summary>
-        /// Updates the details of an existing Contract asynchronously.
+        /// Asynchronously updates the details of an existing Contract.
         /// </summary>
         /// <param name="ContractDto">An object containing the updated Contract information. Cannot be null.</param>
         /// <returns>A task that represents the asynchronous update operation.</returns>
@@ -33,7 +33,7 @@ namespace Andy.Core.Interfaces
         /// <summary>
         /// Asynchronously deletes the Contract identified by the specified Contract ID.
         /// </summary>
-        /// <param name="ContractId">The unique identifier of the Contract to delete.</param>
+        /// <param name="ContractId">The unique identifier of the Contract to delete. Must correspond to an existing Contract.</param>
         /// <returns>A task that represents the asynchronous delete operation.</returns>
         Task DeleteContractAsync(int ContractId);
     }
