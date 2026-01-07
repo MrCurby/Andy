@@ -1,23 +1,23 @@
-﻿using System;
+﻿using Andy.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Andy.Core
+namespace Andy.Core.Entities
 {
-    public class Contract
+    public class EssentialExpense
     {
         [Key]
         public int Id { get; set; }
+        public string? Type { get; set; }
         public string? Name { get; set; }
+        public double? Amount { get; set; }
         public string? Provider { get; set; }
-        public string? ContractNumber { get; set; }
-        public double? CostPerMonth { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public string? Status { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public PaymentCycle PaymentCycle { get; set; }
+        public string? Memo { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? LastUpdated { get; set; }
-        public string? Memo { get; set; }
     }
 }

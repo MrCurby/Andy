@@ -1,4 +1,4 @@
-﻿using Andy.Core;
+﻿using Andy.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Andy.Persistent

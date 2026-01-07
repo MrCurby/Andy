@@ -1,5 +1,5 @@
-﻿using Andy.Core;
-using Andy.Core.DTOs;
+﻿using Andy.Core.DTOs;
+using Andy.Core.Entities;
 using Riok.Mapperly.Abstractions;
 using System;
 using System.Collections.Generic;

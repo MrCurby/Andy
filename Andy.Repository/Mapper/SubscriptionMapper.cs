@@ -1,8 +1,8 @@
 ﻿using Riok.Mapperly.Abstractions;
 using Andy.Core.DTOs;
-using Andy.Core;
 using System.Collections.Generic;
 using System.Linq;
+using Andy.Core.Entities;
 
 namespace Andy.Persistent.Mapper
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Andy.Core
+namespace Andy.Core.Entities
 {
     public class Subscription
     {
