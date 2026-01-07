@@ -22,6 +22,9 @@ namespace Andy.Persistent
             services.AddSingleton<SubscriptionMapper>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
+            services.AddSingleton<ContractMapper>();
+            services.AddScoped<IContractRepository, ContractRepository>();
+
             return services;
         }
     }
