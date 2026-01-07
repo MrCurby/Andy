@@ -9,6 +9,7 @@ namespace Andy.Core
         public static IServiceCollection AddCoreServices(this IServiceCollection services)
         {
             services.AddScoped<ISubscitionService, SubscitionService>();
+            services.AddScoped<IContractService, ContractService>();
 
             return services;
         }

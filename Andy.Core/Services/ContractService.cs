@@ -50,10 +50,7 @@ namespace Andy.Core.Services
         {
             _logger.LogInformation("Method {MethodName} has been called.", nameof(AddContractAsync));
 
-            if (ContractDto == null)
-            {
-                throw new ArgumentNullException(nameof(ContractDto));
-            }
+            ArgumentNullException.ThrowIfNull(ContractDto);
 
             try
             {
